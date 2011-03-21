@@ -1,0 +1,450 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using HDF5DotNet;
+
+namespace dtypes
+{
+    using hsize_t = System.UInt64;
+    class Program
+    {
+        const int DIM0 = 3;
+        const int DIM1 = 5;
+        static int nerrors = 0;
+        struct complex {
+            public int field1;
+            public char field2;
+        };
+        struct s1 {
+            public char c;
+            public uint i;
+            public long l;
+        };
+        enum c_e1 {E1_RED, E1_GREEN, E1_BLUE, E1_WHITE, E1_BLACK};
+
+        static void test_classes()
+        {
+            try
+            {
+                Console.WriteLine("H5Tget_class()");
+
+                /*-------------------------------------------------------------
+                 *  Check class of some atomic types.
+                 *-----------------------------------------------------------*/
+                H5T.H5TClass tcls = H5T.getClass(H5T.H5Type.NATIVE_INT);
+                if (tcls != H5T.H5TClass.INTEGER)
+                    Console.WriteLine("Test class should have been H5T_INTEGER");
+
+                tcls = H5T.getClass(H5T.H5Type.NATIVE_DOUBLE);
+                if (tcls != H5T.H5TClass.FLOAT)
+                    Console.WriteLine("Test class should have been H5T_FLOAT");
+
+                H5DataTypeId op_type = H5T.create(H5T.CreateClass.OPAQUE, 1);
+                tcls = H5T.getClass(op_type);
+                if (tcls != H5T.H5TClass.OPAQUE)
+                    Console.WriteLine("Test class should have been H5T_OPAQUE");
+
+                // Create a VL datatype of char.  It should be a VL, not a string class.
+                H5DataTypeId vlcId = H5T.vlenCreate(H5T.H5Type.NATIVE_UCHAR);
+
+                //    if((vlc_id=H5Tvlen_create(H5T_NATIVE_CHAR))<0) TEST_ERROR
+                // Make certain that the correct classes can be detected
+                tcls = H5T.getClass(vlcId);
+                if (tcls != H5T.H5TClass.VLEN)
+                    Console.WriteLine("Test class should have been H5T_VLEN");
+                // Make certain that an incorrect class is not detected */
+                if (tcls == H5T.H5TClass.STRING)
+                    Console.WriteLine("Test class should not be H5T_STRING");
+
+                // Create a VL string.  It should be a string, not a VL class.
+                H5DataTypeId vlsId = H5T.copy(H5T.H5Type.C_S1);
+                H5T.setSize(vlsId, H5T_VARIABLE);
+                tcls = H5T.getClass(vlsId);
+                if (tcls != H5T.H5TClass.STRING)
+                    Console.WriteLine("Test class should have been H5T_STRING");
+                if (tcls == H5T.H5TClass.VLEN)
+                    Console.WriteLine("Test class should not be H5T_VLEN");
+                
+                /*-------------------------------------------------------------
+                 *  Check class for member types of compound type.
+                 *-----------------------------------------------------------*/
+                /* Create a compound datatype and insert some complex types */
+                /* if ((cmpd_id = H5Tcreate(H5T_COMPOUND, sizeof(complex)))<0) TEST_ERROR
+                if (H5Tinsert(cmpd_id, "vl_c", HOFFSET(complex, vl_c), vlc_id)<0) TEST_ERROR
+                if (H5Tinsert(cmpd_id, "vl_s", HOFFSET(complex, vl_s), vls_id)<0) TEST;*/
+
+             //   uint comp_size = (uint)System.Runtime.InteropServices.Marshal.SizeOf(complex);
+                uint comp_size;
+                unsafe
+                {
+                    comp_size = (uint)sizeof(complex);
+                }
+                
+                H5DataTypeId cmpdId = H5T.create(H5T.CreateClass.COMPOUND, comp_size);
+                H5T.insert(cmpdId, "field1", HOFFSET(complex, field1), vlcId);
+                H5T.insert(cmpdId, "field2", HOFFSET(complex, field2), vlsId);
+
+                uint i;
+                int nmembs = H5T.getNMembers(cmpdId);
+                for (i = 0; i < nmembs; i++)
+                {
+                    H5T.H5TClass memb_cls = H5T.getMemberClass(cmpdId, i);
+                    string memb_name = H5T.getMemberName(cmpdId, i);
+                    int memb_idx = H5T.getMemberIndex(cmpdId, memb_name);
+                    if (memb_idx != i)
+                        Console.WriteLine("H5T.getMemberName and/or H5T.getMemberIndex returned false values.");
+                }
+
+                /* Close datatypes */
+                H5T.close(cmpdId);
+                H5T.close(vlcId);
+            } // end of try block
+            catch (HDFException anyHDF5E)
+            {
+                Console.WriteLine(anyHDF5E.Message);
+                nerrors++;
+            }
+            catch (System.Exception sysE)
+            {
+                Console.WriteLine(sysE.TargetSite);
+                Console.WriteLine(sysE.Message);
+            }
+        }  // end of test_classes
+        static void test_enum(H5FileId fileId)
+        {
+            try
+            {
+                Console.WriteLine("Testing enumeration types");
+
+                c_e1 eval;
+                int  ival;
+                c_e1[] data2 = new c_e1[10];
+                uint i;
+                hsize_t[] ds_size = {10};
+
+                H5GroupId cwgroupId = H5G.create(fileId, "test_tr1", 0);
+
+                // A native integer
+                H5DataTypeId m_type = H5T.create(H5T.CreateClass.ENUM, sizeof(c_e1));
+        
+               /*
+                if (H5Tenum_insert(m_type, "RED",   CPTR(eval, E1_RED  ))<0) goto error;
+                if (H5Tenum_insert(m_type, "GREEN", CPTR(eval, E1_GREEN))<0) goto error;
+                if (H5Tenum_insert(m_type, "BLUE",  CPTR(eval, E1_BLUE ))<0) goto error;
+                if (H5Tenum_insert(m_type, "WHITE", CPTR(eval, E1_WHITE))<0) goto error;
+                if (H5Tenum_insert(m_type, "BLACK", CPTR(eval, E1_BLACK))<0) goto error;
+                */
+                H5DataTypeId f_type = H5T.create(H5T.CreateClass.ENUM, sizeof(c_e1));
+                    /*
+                if (H5Tenum_insert(f_type, "RED",   CPTR(ival, 105))<0) goto error;
+                if (H5Tenum_insert(f_type, "GREEN", CPTR(ival, 104))<0) goto error;
+                if (H5Tenum_insert(f_type, "BLUE",  CPTR(ival, 103))<0) goto error;
+                if (H5Tenum_insert(f_type, "WHITE", CPTR(ival, 102))<0) goto error;
+                if (H5Tenum_insert(f_type, "BLACK", CPTR(ival, 101))<0) goto error;
+                    */
+
+                /*
+                    if ((space=H5Screate_simple(1, ds_size, NULL))<0) goto error;
+                    if ((dset=H5Dcreate(cwg, "color_table", f_type, space, H5P_DEFAULT))<0)
+                        goto error;
+                    if (H5Dwrite(dset, m_type, space, space, H5P_DEFAULT, data1)<0) goto error;
+                    if (H5Dread(dset, m_type, space, space, H5P_DEFAULT, data2)<0) goto error;
+                */
+                // Create a simple dataspace
+                H5DataSpaceId spaceId = H5S.create_simple(1, ds_size);
+
+                // Create the dataset.
+                H5DataSetId dsetId = H5T.create(cwgroupId, "color_table", f_type, spaceId);
+        
+                // Write to the dataset and read the data back.
+                c_e1[] data1 = {c_e1.E1_RED, c_e1.E1_GREEN, c_e1.E1_BLUE,  c_e1.E1_GREEN, 
+                    c_e1.E1_WHITE, c_e1.E1_WHITE, c_e1.E1_BLACK, c_e1.E1_GREEN, c_e1.E1_BLUE,  c_e1.E1_RED};
+                H5D.write(dsetId, m_type, spaceId, spaceId, data1);
+                H5D.read(dsetId, m_type, spaceId, spaceId, data2);
+
+                for (i=0; i<ds_size[0]; i++) {
+                    if (data1[i]!=data2[i]) {
+                        Console.WriteLine("    data1[{0}]={1}, data2[{2}]={3} (should be the same)\n",
+                               (ulong)i, (int)(data1[i]),
+                               (ulong)i, (int)(data2[i]));
+                        Console.WriteLine("FAILED");
+                    }
+                }
+                H5T.close(m_type);
+                H5T.close(f_type);
+                H5S.close(spaceId);
+                H5D.close(dsetId);
+                H5G.close(cwgroupId);
+
+                int	i, j, n;
+                hsize_t[] dims = {DIM0,DIM1};
+                void                *tmp;
+                short[] colors = new short[8];
+                char[] sub_colors = new char[16];
+                const char[] mname = { "RED", "GREEN", "BLUE", "YELLOW", "PINK", "PURPLE", "ORANGE", "WHITE" };
+                short[,] spoints2 = new short[DIM0,DIM1];
+                short[,] scheck2 = new short[DIM0,DIM1];
+
+    TESTING("enum datatype");
+
+                // Initialize the dataset
+                for (i = 0; i < DIM0; i++) {
+                    for (j=0, n=0; j < DIM1; j++, n++)
+	                spoints2[i,j] = (i*10+j*100+n)%8;
+                }
+
+                // Create the data space */
+                H5DataSpaceId dspace = H5S.create_simple(2, dims);
+
+                // Construct enum type based on native type
+                H5DataTypeId etype = H5T.enumCreate(H5T.H5Type.STD_I16LE);
+    //if((tid=H5Tenum_create(H5T_STD_I16LE))<0) TEST_ERROR;
+
+
+                for (i = 0; i < 8; i++) {
+                    sub_colors[i*2]=i;
+                    sub_colors[i*2+1]=0;
+                    //H5T.enumInsert(etype, mname[i], ???);
+        //if(H5Tenum_insert(tid, mname[i], &(sub_colors[i*2]))<0) TEST_ERROR;
+                    }
+
+                // Create the dataset
+                H5DataSetId dataset = H5D.create(fileId, DSET_ENUM_NAME, etype, dspace);
+
+                // Construct enum type based on native type in memory
+                etype_m = H5T.enumCreate(H5T.H5Type.NATIVE_SHORT);
+
+                for (i = 0; i < 8; i++)
+                {
+                    colors[i] = i;
+                    //H5T.enumInsert(etype_m, mname[i], ???);
+        //if(H5Tenum_insert(tid_m, mname[i], &(colors[i]))<0) TEST_ERROR;
+ //   if((tid_m=H5Tenum_create(H5T_NATIVE_SHORT))<0) TEST_ERROR;
+                }
+
+                // Write the data to the dataset.
+                H5D.write(dataset, etype_m, spoints2);
+
+                // Close objects.
+                H5D.close(dataset);
+                H5T.close(etype);
+                H5S.close(dspace);
+                H5T.close(etype_m);
+
+                // Open dataset again to check the type.
+                dataset = H5D.open(fileId, DSET_ENUM_NAME);
+
+                H5DataTypeId dstype = H5D.getType(dataset);
+
+                H5T.H5TClass tclass = H5T.getClass(dstype);
+
+                if (tclass != H5T.H5TClass.ENUM)
+                    Console.WriteLine("Type should be an enum class");
+
+                H5D.close(dataset);
+                H5T.close(dstype);
+            } // end of try block
+            catch (HDFException anyHDF5E)
+            {
+                Console.WriteLine(anyHDF5E.Message);
+                nerrors++;
+            }
+            catch (System.Exception sysE)
+            {
+                Console.WriteLine(sysE.TargetSite);
+                Console.WriteLine(sysE.Message);
+            }
+        }  // end of test_enum
+
+        static void test_compound_dtype(H5FileId fileId)
+        {
+            uint			i, j, n;
+            /*
+    s1                  *temp_point, *temp_check;
+    s1	                *points, *check;
+    void                *tmp, *bkg;
+*/
+            try
+            {
+                Console.WriteLine("Testing compound datatypes");
+
+                // Allocate space for the points & check arrays
+                s1[,] points = new s1[DIM0,DIM1];
+                s1[,] check = new s1[DIM0,DIM1];
+
+ /*   if((points=malloc(sizeof(s1)*DIM0*DIM1))==NULL)
+        TEST_ERROR;
+    if((check=calloc(sizeof(s1),DIM0*DIM1))==NULL)
+        TEST_ERROR;*/
+                // Initialize the dataset
+                for (i = n = 0; i < DIM0; i++) {
+	            for (j = 0; j < DIM1; j++) {
+	                points[i,j].c = 't';
+	                points[i,j].i = n++;
+	                points[i,j].l = (i*10+j*100)*n;
+	            }
+                }
+
+                // Create the data space
+                hsize_t[] dims = {DIM0,DIM1};
+                H5DataSpaceId spaceId = H5S.create_simple(2, dims);
+
+                // Create compound datatype for disk storage
+                H5DataTypeId type1Id = H5T.create(H5T.CreateClass.COMPOUND, sizeof(s1));
+
+                // Insert members
+                H5T.insert(type1Id, "c", 0, H5T.H5Type.STD_U8LE);
+                H5T.insert(type1Id, "i", 1, H5T.H5Type.STD_U32LE);
+                H5T.insert(type1Id, "l", 5, H5T.H5Type.STD_I64BE);
+
+                // Create the dataset
+                H5DataSetId dsetId = H5D.create(fileId, DSET_COMPOUND_NAME, type1Id, spaceId);
+
+                // Create compound datatype for datatype in memory
+                H5DataTypeId type2Id = H5T.create(H5T.CreateClass.COMPOUND, sizeof(s1));
+                H5T.insert(type2Id, "c", HOFFSET(s1, c), H5T.H5Type.NATIVE_UCHAR);
+                H5T.insert(type2Id, "i", HOFFSET(s1, i), H5T.H5Type.NATIVE_UINT);
+                H5T.insert(type2Id, "l", HOFFSET(s1, l), H5T.H5Type.NATIVE_LLONG);
+
+                // Write the dataset
+                H5D.write(dsetId, type2Id, points);
+
+                // Close dataset and dataspace
+                H5D.close(dsetId);
+                H5S.close(spaceId);
+
+                // Open dataset again to check H5Tget_native_type
+                dsetId = H5D.open(fileId, DSET_COMPOUND_NAME);
+
+                // Get its type
+                H5DataTypeId dset_typeId = H5D.getType(dsetId);
+
+                H5DataTypeId native_type = H5T.getNativeType(dset_typeId, H5T.Direction.DEFAULT);
+
+    /* Verify the datatype of each field retrieved and converted */
+                // waiting for getMemberType!!!
+//    if((mem_id = H5Tget_member_type(native_type, 0))<0)
+//    if(H5Tget_order(mem_id) != H5Tget_order(H5T_NATIVE_UCHAR))
+//    if(H5Tget_size(mem_id) < H5Tget_size(H5T_STD_U8LE))
+//    if(H5T_INTEGER!=H5Tget_class(mem_id))
+//    H5Tclose(mem_id);
+/*
+    if((mem_id = H5Tget_member_type(native_type, 1))<0)
+        TEST_ERROR;
+    if(H5Tget_order(mem_id) != H5Tget_order(H5T_NATIVE_UINT))
+        TEST_ERROR;
+    if(H5Tget_size(mem_id) < H5Tget_size(H5T_STD_U32LE))
+        TEST_ERROR;
+    if(H5T_INTEGER!=H5Tget_class(mem_id))
+        TEST_ERROR;
+    H5Tclose(mem_id);
+
+    if((mem_id = H5Tget_member_type(native_type, 2))<0)
+        TEST_ERROR;
+    if(H5Tget_order(mem_id) != H5Tget_order(H5T_NATIVE_LLONG))
+        TEST_ERROR;
+    if(H5Tget_size(mem_id) < H5Tget_size(H5T_STD_I64BE))
+        TEST_ERROR;
+    if(H5T_INTEGER!=H5Tget_class(mem_id))
+        TEST_ERROR;
+    H5Tclose(mem_id);
+*/
+
+                H5D.close(dsetId);
+                H5T.close(dset_typeId);
+                H5T.close(native_type);
+                H5T.close(type1Id);
+                H5T.close(type2Id);
+
+                Console.WriteLine("PASSED");
+            } // end of try block
+            catch (HDFException anyHDF5E)
+            {
+                Console.WriteLine(anyHDF5E.Message);
+                nerrors++;
+            }
+            catch (System.Exception sysE)
+            {
+                Console.WriteLine(sysE.TargetSite);
+                Console.WriteLine(sysE.Message);
+            }
+} // test_compound_dtype
+        static void test_stub()
+        {
+            try
+            {
+            }
+            catch (HDFException anyHDF5E)
+            {
+                Console.WriteLine(anyHDF5E.Message);
+            }
+            catch (System.Exception sysE)
+            {
+                Console.WriteLine(sysE.TargetSite);
+                Console.WriteLine(sysE.Message);
+            }
+        } // test_stub
+
+        static void test_copy()
+        {
+            try
+            {
+                Console.WriteLine("Testing copying datatypes");
+
+                H5DataTypeId inttype = H5T.copy(H5T.H5Type.NATIVE_INT);
+                uint intsize = H5T.getSize(inttype);
+
+                H5DataTypeId tcopy1 = H5T.copy(inttype);
+                uint tcopy1_size = H5T.getSize(tcopy1);
+
+                //Console.WriteLine("intsize = {0}, tcopy1_size = {1}", intsize, tcopy1_size);
+                if (intsize != tcopy1_size)
+                    Console.WriteLine("Copy types incorrectly in test_copy");
+
+                // Close second type
+                H5T.close(tcopy1);
+
+                /*
+                 * Test copy a datatype from a dataset.
+                 */
+                // Create a dataset with a simple dataspace.
+                H5DataSpaceId dspace = H5S.create_simple(RANK, dims);
+                H5DataSetId dset = H5D.create(fileId, "test_types", inttype, dspace);
+
+                // Obtain the datatype from the dataset.
+                H5DataTypeId dstype = H5T.copy(dset);
+
+                // Check this datatype's class and size.
+                tclass = H5T.getClass(dstype);
+                if (tclass != H5T.H5TClass.INTEGER)
+                    Console.WriteLine("H5T.copy type from a dataset incorrectly in test_copy");
+
+                tsize = H5T.getSize(dstype);
+                if (tsize != intsize)
+                    Console.WriteLine("H5T.copy type from a dataset incorrectly in test_copy");
+            }
+            catch (HDFException anyHDF5E)
+            {
+                Console.WriteLine(anyHDF5E.Message);
+            }
+            catch (System.Exception sysE)
+            {
+                Console.WriteLine(sysE.TargetSite);
+                Console.WriteLine(sysE.Message);
+            }
+        } // test_stub
+
+
+
+        static void Main(string[] args)
+        {
+            H5FileId fileId = H5F.create("test_enum.h5", H5F.CreateMode.ACC_TRUNC);
+            test_classes();
+            test_enum(fileId);
+            if (nerrors > 0)
+                Console.WriteLine("Test failed: ", nerrors, "occurred!");
+            else
+                Console.WriteLine("All dataset tests passed.");
+        }
+    }
+}

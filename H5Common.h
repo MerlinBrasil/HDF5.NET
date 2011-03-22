@@ -327,16 +327,6 @@ namespace HDF5DotNet
         /// </param>
         H5PacketTableId(hid_t id);
 
-    public:
-        /// <summary>
-        /// Allow read-only access to the internal HDF5 id to HDF5 library
-        /// members. (members of this assembly).
-        /// </summary>
-        virtual property hid_t Id
-        {
-            hid_t get() { return id_; }
-        }
-
     private:
         /// <summary>
         /// The default constructor is disallowed.  Only HDF5 library
@@ -344,10 +334,5 @@ namespace HDF5DotNet
         /// and they must supply an id when doing so.
         /// </summary>
         H5PacketTableId();
-
-        /// <summary>
-        /// The hdf5 internal id used to identify objects.
-        /// </summary>
-        hid_t id_;
     };
 }

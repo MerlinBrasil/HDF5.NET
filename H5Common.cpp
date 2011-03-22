@@ -131,5 +131,21 @@ namespace HDF5DotNet
    {
       assert(0);
    }
+
+    H5PacketTableId::H5PacketTableId(H5S::H5SType h5DatasetType) :
+        H5Id(safe_cast<hid_t>(h5DatasetType))
+    {
+    }
+
+    // Store the internal HDS5 id.
+    H5PacketTableId::H5PacketTableId(hid_t id) :  H5Id(id)
+    {
+    }
+
+    // private default constructor should never be used.
+    H5PacketTableId::H5PacketTableId() : H5Id(0)
+    {
+        assert(0);
+    }
 }
 

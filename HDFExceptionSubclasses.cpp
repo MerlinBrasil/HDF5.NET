@@ -312,4 +312,70 @@ namespace HDF5DotNet
    {
    }
 
+   H5PTopenException::H5PTopenException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTcloseException::H5PTcloseException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTappendException::H5PTappendException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTcreateFixedLengthException::H5PTcreateFixedLengthException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTcreateIndexException::H5PTcreateIndexException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTcreateVariableLengthException::H5PTcreateVariableLengthException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTgetIndexException::H5PTgetIndexException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTgetNextException::H5PTgetNextException(String^ message,
+                                         unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTreadException::H5PTreadException(String^ message,
+                                       unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTsetIndexException::H5PTsetIndexException(String^ message,
+                                       unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
+   H5PTgetNumPacketsException::H5PTgetNumPacketsException(String^ message,
+                                       unsigned int errorCode) : 
+      HDFException(message, errorCode)
+   {
+   }
+
 } // close namespace

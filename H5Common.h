@@ -15,6 +15,7 @@
 
 #define _H5private_H
 #define HDF5_DOT_NET
+
 #include "H5Fpublic.h"
 #include "H5T.h"
 #include "H5S.h"
@@ -309,4 +310,44 @@ namespace HDF5DotNet
 	 H5PropertyListId();
    };
 
+    /// <summary> H5PacketTableId uniquely identifies a packet table. </summary>
+    public ref class H5PacketTableId : public H5Id
+    {
+    public:
+        H5PacketTableId(H5S::H5SType h5DatasetType);
+
+    internal:
+        /// <remarks>
+        /// This is the only constructor used to create an H5PacketTableId.
+        /// It can only be invoked by HDF5DotNet library functions.
+        /// </remarks>
+        /// <param name="id">
+        /// Id is an HDF5 library-generated identification
+        /// number that serves as a unique identifier.
+        /// </param>
+        H5PacketTableId(hid_t id);
+
+    public:
+        /// <summary>
+        /// Allow read-only access to the internal HDF5 id to HDF5 library
+        /// members. (members of this assembly).
+        /// </summary>
+        virtual property hid_t Id
+        {
+            hid_t get() { return id_; }
+        }
+
+    private:
+        /// <summary>
+        /// The default constructor is disallowed.  Only HDF5 library
+        /// routines are capable of creating an instance of H5DataSetId
+        /// and they must supply an id when doing so.
+        /// </summary>
+        H5PacketTableId();
+
+        /// <summary>
+        /// The hdf5 internal id used to identify objects.
+        /// </summary>
+        hid_t id_;
+    };
 }

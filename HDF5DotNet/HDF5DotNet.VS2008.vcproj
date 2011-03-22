@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\H5Array.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\H5Common.cpp"
 				>
 			</File>
@@ -210,6 +214,10 @@
 			</File>
 			<File
 				RelativePath="..\H5G.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\H5PT.cpp"
 				>
 			</File>
 			<File
@@ -238,6 +246,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\H5Array.h"
+				>
+			</File>
 			<File
 				RelativePath="..\H5Common.h"
 				>
@@ -268,6 +280,14 @@
 			</File>
 			<File
 				RelativePath="..\H5P.h"
+				>
+			</File>
+			<File
+				RelativePath="..\H5PT.h"
+				>
+			</File>
+			<File
+				RelativePath="..\H5PTpublicNET.h"
 				>
 			</File>
 			<File

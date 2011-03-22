@@ -310,4 +310,70 @@ namespace HDF5DotNet
         H5TcommitException(String^ message, unsigned int errorCode);
    };
 
+   public ref class H5PTopenException : public HDFException
+   {
+     internal:
+        H5PTopenException(String^ message, unsigned int errorCode);
+   };
+
+  public ref class H5PTcloseException : public HDFException
+   {
+     internal:
+        H5PTcloseException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTappendException : public HDFException
+   {
+     internal:
+        H5PTappendException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTcreateFixedLengthException : public HDFException
+   {
+     internal:
+        H5PTcreateFixedLengthException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTcreateIndexException : public HDFException
+   {
+     internal:
+        H5PTcreateIndexException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTcreateVariableLengthException : public HDFException
+   {
+     internal:
+        H5PTcreateVariableLengthException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTgetIndexException : public HDFException
+   {
+     internal:
+        H5PTgetIndexException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTgetNextException : public HDFException
+   {
+     internal:
+        H5PTgetNextException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTgetNumPacketsException : public HDFException
+   {
+     internal:
+        H5PTgetNumPacketsException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTreadException : public HDFException
+   {
+     internal:
+        H5PTreadException(String^ message, unsigned int errorCode);
+   };
+
+   public ref class H5PTsetIndexException : public HDFException
+   {
+     internal:
+        H5PTsetIndexException(String^ message, unsigned int errorCode);
+   };
+
 } // close namespace

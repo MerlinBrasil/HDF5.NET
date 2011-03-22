@@ -103,6 +103,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\H5Array.cpp" />
+    <ClCompile Include="..\H5PT.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="..\H5Common.cpp" />
     <ClCompile Include="..\H5D.cpp" />
@@ -124,6 +126,8 @@
     <ClInclude Include="..\H5G.h" />
     <ClInclude Include="..\H5GpublicNET.h" />
     <ClInclude Include="..\H5P.h" />
+    <ClInclude Include="..\H5PT.h" />
+    <ClInclude Include="..\H5PTpublicNET.h" />
     <ClInclude Include="..\H5S.h" />
     <ClInclude Include="..\H5T.h" />
     <ClInclude Include="..\HDFException.h" />

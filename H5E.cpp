@@ -28,14 +28,14 @@ using namespace System::Runtime::InteropServices;
 [DllImport("hdf5dll.dll",
 	   CharSet=CharSet::Auto,
 	   CallingConvention=CallingConvention::StdCall)]
-extern "C" hid_t _cdecl H5Eset_auto(H5E_auto_t func, void* clientData);
+extern "C" hid_t _cdecl H5Eset_auto1(H5E_auto_t func, void* clientData);
 
 namespace HDF5DotNet
 {
    void H5E::suppressPrinting()
    {
       // Use H5Eset_auto to suppress printing
-      herr_t status = H5Eset_auto(0,0);
+      herr_t status = H5Eset_auto1(0,0);
       
       if (status < 0)
       {

@@ -28,7 +28,11 @@ cd dtypes\bin\Debug
 dtypes.exe
 
 cd ..\..\..\
+echo cd h5pt\bin\Debug
+cd h5pt\bin\Debug
+h5pt.exe
 
+cd ..\..\..\
 
 
 

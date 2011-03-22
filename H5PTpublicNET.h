@@ -13,7 +13,6 @@
  * http://hdfgroup.org/HDF5/doc/Copyright.html.  If you do not have          *
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #ifndef _H5PTpublic_H
 #define _H5PTpublic_H
 

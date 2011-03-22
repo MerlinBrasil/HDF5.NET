@@ -27,7 +27,7 @@ using namespace System::Runtime::InteropServices;
 [DllImport("hdf5dll.dll",
 	   CharSet=CharSet::Auto,
 	   CallingConvention=CallingConvention::StdCall)]
-extern "C" int _cdecl H5Gcreate(
+extern "C" int _cdecl H5Gcreate1(
    int fileId, 
    [MarshalAs(UnmanagedType::LPStr)] 
    String^ groupName, size_t sizeHint);
@@ -41,7 +41,7 @@ extern "C" herr_t _cdecl H5Gclose(hid_t fileId);
 [DllImport("hdf5dll.dll",
 	   CharSet=CharSet::Auto,
 	   CallingConvention=CallingConvention::StdCall)]
-extern "C" herr_t _cdecl H5Gopen(hid_t groupOrFileId, 
+extern "C" herr_t _cdecl H5Gopen1(hid_t groupOrFileId, 
 				 [MarshalAs(UnmanagedType::LPStr)] 
 				 String^ groupName);
 
@@ -73,7 +73,7 @@ namespace HDF5DotNet
 			  size_t sizeHint)
    {
       // Call "C" routine.
-      hid_t id = H5Gcreate(groupOrFileId->Id, groupName, sizeHint);
+      hid_t id = H5Gcreate1(groupOrFileId->Id, groupName, sizeHint);
 
       // Check for error status (so we can throw an exception)
       if (id < 0)
@@ -93,7 +93,7 @@ namespace HDF5DotNet
    H5GroupId^ H5G::open(H5LocId^ groupOrFileId, String^ groupName)
    {
       // Call "C" routine.
-      hid_t id = H5Gopen(groupOrFileId->Id, groupName);
+      hid_t id = H5Gopen1(groupOrFileId->Id, groupName);
 
       // Check for error status (so we can throw an exception)
       if (id < 0)

@@ -28,7 +28,7 @@ using namespace System::Runtime::InteropServices;
 [DllImport("hdf5dll.dll",
 	   CharSet=CharSet::Auto,
 	   CallingConvention=CallingConvention::StdCall)]
-extern "C" hid_t _cdecl H5Dcreate(hid_t fileId,
+extern "C" hid_t _cdecl H5Dcreate1(hid_t fileId,
 				  [MarshalAs(UnmanagedType::LPStr)] 
 				  String^ dataSetName,
 				  hid_t dataType,
@@ -66,7 +66,7 @@ extern "C" herr_t _cdecl H5Dread(hid_t dataSetId,
 [DllImport("hdf5dll.dll",
 	   CharSet=CharSet::Auto,
 	   CallingConvention=CallingConvention::StdCall)]
-extern "C" herr_t _cdecl H5Dopen(hid_t groupOrFileId,
+extern "C" herr_t _cdecl H5Dopen1(hid_t groupOrFileId,
 				 [MarshalAs(UnmanagedType::LPStr)] 
 				 String^ dataSetName);
 [DllImport("hdf5dll.dll",
@@ -86,7 +86,7 @@ namespace HDF5DotNet
 			    H5T::H5Type dataType,
 			    H5DataSpaceId^ dataSpaceId)
    {
-      hid_t status = H5Dcreate(groupOrFileId->Id, 
+      hid_t status = H5Dcreate1(groupOrFileId->Id, 
 			       datasetName, 
 			       H5T::getStdType(dataType),
 			       dataSpaceId->Id,
@@ -112,7 +112,7 @@ namespace HDF5DotNet
 		     H5DataTypeId^ dataType,
 		     H5DataSpaceId^ dataSpaceId)
    {
-      hid_t status = H5Dcreate(groupOrFileId->Id, 
+      hid_t status = H5Dcreate1(groupOrFileId->Id, 
 			       datasetName, 
 			       dataType->Id,
 				   dataSpaceId->Id,
@@ -313,7 +313,7 @@ namespace HDF5DotNet
    
    H5DataSetId^ H5D::open(H5LocId^ groupOrFileId, String^ dataSetName)
    {
-      herr_t status = H5Dopen(groupOrFileId->Id, dataSetName);
+      herr_t status = H5Dopen1(groupOrFileId->Id, dataSetName);
 
       if (status < 0)
       {

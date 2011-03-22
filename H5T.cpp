@@ -58,7 +58,7 @@ extern "C" herr_t _cdecl H5Tset_order(hid_t typeId,
 [DllImport("hdf5dll.dll",
 	   CharSet=CharSet::Auto,
 	   CallingConvention=CallingConvention::StdCall)]
-extern "C" herr_t _cdecl H5Topen(hid_t groupOrFileId,
+extern "C" herr_t _cdecl H5Topen1(hid_t groupOrFileId,
                               [MarshalAs(UnmanagedType::LPStr)] 
 			      String^ datatypeName);
 
@@ -85,7 +85,7 @@ extern "C" herr_t _cdecl H5Tinsert(hid_t compoundTypeId,
 [DllImport("hdf5dll.dll",
 	   CharSet=CharSet::Auto,
 	   CallingConvention=CallingConvention::StdCall)]
-extern "C" herr_t _cdecl H5Tcommit(hid_t location,
+extern "C" herr_t _cdecl H5Tcommit1(hid_t location,
 				   [MarshalAs(UnmanagedType::LPStr)] 
 				   String^ dataTypeName,
 				   hid_t typeId);
@@ -419,7 +419,7 @@ namespace HDF5DotNet
    H5DataTypeId^ H5T::open(H5LocId^ groupOrFileId,
 			   String^ datatypeName)
    {
-      herr_t status = H5Topen(groupOrFileId->Id,
+      herr_t status = H5Topen1(groupOrFileId->Id,
 				datatypeName);
       
       if (status < 0)
@@ -876,7 +876,7 @@ namespace HDF5DotNet
 		    String^ dataTypeName,
 		    H5DataTypeId^ typeId)
    {
-      herr_t status = H5Tcommit(location->Id,
+      herr_t status = H5Tcommit1(location->Id,
 				dataTypeName,
 				typeId->Id);
       if (status < 0)

@@ -310,7 +310,7 @@ namespace HDF5DotNet
         {
             String^ message = String::Format(
                 "H5PT.GetNext: \n"
-                "Failed to read data from packet table {0:x} with status {2}\n",
+                "Failed to read data from packet table {0:x} with status {1}\n",
                 locationId->Id,
                 status);
 
